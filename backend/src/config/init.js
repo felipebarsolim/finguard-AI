@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const initDatabase = async () => {
     try {
+        //to read sql file and use as text in database.query
         const sqlPath = path.join(__dirname, "../models/schema.sql");
         const sql = fs.readFileSync(sqlPath, "utf8");
 
