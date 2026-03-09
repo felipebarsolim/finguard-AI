@@ -54,3 +54,36 @@ export const addTransactions = async (req, res) => {
         });
     }
 };
+
+export const deleteTransactions = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const query = `
+        DELETE FROM transactions
+        WHERE id = $1 AND user_id = $2
+        Returning *`;
+
+        const { rows } = database.query(query, [id, userId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                message: "Transaction not found",
+            });
+        }
+
+        res.status(200).json({
+            message: "Transaction deleted",
+            deletedTransaction: rows[0],
+        });
+    } catch (err) {
+        console.error(
+            "ERROR in deleteTransactions function by transactionController.js, " +
+                err,
+        );
+        res.status(500).json({
+            error: "Internal ERROR",
+        });
+    }
+};

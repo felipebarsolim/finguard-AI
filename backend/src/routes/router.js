@@ -5,6 +5,7 @@ import { authenticateToken } from "../middlewares/authMiddleware.js";
 import {
     getTransactions,
     addTransactions,
+    deleteTransactions,
 } from "../controllers/transactionController.js";
 
 const router = express.Router();
@@ -23,5 +24,7 @@ router.get("/profile", authenticateToken, (req, res) => {
         userData: req.user,
     });
 });
+
+router.delete("/transaction", authenticateToken, deleteTransactions);
 
 export default router;
