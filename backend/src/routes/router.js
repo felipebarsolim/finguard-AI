@@ -23,6 +23,12 @@ router.post("/login", login);
 
 router.post("/transactions", authenticateToken, addTransactions);
 
+router.get("/profile/validate", authenticateToken, (req, res) => {
+    res.status(200).json({
+        user: req.user,
+    });
+});
+
 router.get("/register", (req, res) => {
     res.sendFile(
         path.join(
@@ -53,11 +59,18 @@ router.get("/login", (req, res) => {
 
 router.get("/transactions", authenticateToken, getTransactions);
 
-router.get("/profile", authenticateToken, (req, res) => {
-    res.json({
-        message: "Welcome",
-        userData: req.user,
-    });
+router.get("/profile", (req, res) => {
+    res.sendFile(
+        path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "frontend",
+            "html",
+            "profile.html",
+        ),
+    );
 });
 
 router.get("/balance", authenticateToken, getBalance);
