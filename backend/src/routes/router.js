@@ -6,6 +6,7 @@ import {
     getTransactions,
     addTransactions,
     deleteTransactions,
+    getBalance,
 } from "../controllers/transactionController.js";
 
 const router = express.Router();
@@ -25,6 +26,8 @@ router.get("/profile", authenticateToken, (req, res) => {
     });
 });
 
-router.delete("/transaction", authenticateToken, deleteTransactions);
+router.get("/transactions", authenticateToken, getBalance);
+
+router.delete("/transaction/:id", authenticateToken, deleteTransactions);
 
 export default router;

@@ -87,3 +87,35 @@ export const deleteTransactions = async (req, res) => {
         });
     }
 };
+
+export const getBalance = async (req, res) => {
+    const userId = req.user.id;
+    try {
+        const query = `
+        SELECT
+            COALESCE(SUM(amount) FILTER (WHERE type = 'income'), 0) as total_income,
+            COALESCE(SUM(amount) FILTER (WHERE type = 'expense'), 0) as total_expense,
+            (COALESCE(SUM(amount) FILTER (WHERE type = 'income'),0) - 
+            (COALESCE(SUM(amount) FILTER (WHERE type = 'expense'), 0) as balance
+        FROM transactions
+        WHERE user_id = $1`;
+
+        const { rows } = database.query(query, [userId]);
+
+        res.status(200).json({
+            userId,
+            summary: {
+                income: parseFloat(rows[0].total_income),
+                expense: parseFloat(rows[0].total_expense),
+                balance: parseFloat(rows[0].balance),
+            },
+        });
+    } catch (err) {
+        console.error(
+            "ERROR in getBalance funcion from transactionController.js, " + err,
+        );
+        res.status(500).json({
+            error: "not possible process balance",
+        });
+    }
+};
