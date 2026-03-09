@@ -26,7 +26,7 @@ router.get("/profile", authenticateToken, (req, res) => {
     });
 });
 
-router.get("/transactions", authenticateToken, getBalance);
+router.get("/balance", authenticateToken, getBalance);
 
 router.delete("/transaction/:id", authenticateToken, deleteTransactions);
 
