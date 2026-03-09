@@ -7,6 +7,7 @@ import {
     addTransactions,
     deleteTransactions,
     getBalance,
+    getTransactionByDate,
 } from "../controllers/transactionController.js";
 
 const router = express.Router();
@@ -27,6 +28,8 @@ router.get("/profile", authenticateToken, (req, res) => {
 });
 
 router.get("/balance", authenticateToken, getBalance);
+
+router.get("/transactions/filter", authenticateToken, getTransactionByDate);
 
 router.delete("/transaction/:id", authenticateToken, deleteTransactions);
 

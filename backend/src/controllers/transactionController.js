@@ -133,3 +133,37 @@ export const getBalance = async (req, res) => {
         });
     }
 };
+
+export const getTransactionByDate = async (req, res) => {
+    const userId = req.user.id;
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+        return res.status(400).json({
+            message: "Date not send",
+        });
+    }
+
+    try {
+        const query = `
+        SELECT * FROM transactions
+        WHERE user_id = $1 AND date BETWEEN $2 AND $3
+        ORDER BY date DESC`;
+
+        const { rows } = await database.query(query, [userId, start, end]);
+
+        res.status(200).json({
+            period: { start, end },
+            count: rows.length,
+            transactions: rows,
+        });
+    } catch (err) {
+        console.error(
+            "ERROR in getTransactionsByDate from transactionsController, " +
+                err,
+        );
+        res.status(500).json({
+            error: "Internal ERROR",
+        });
+    }
+};
