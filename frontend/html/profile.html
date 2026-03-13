@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FinGuard AI - Dashboard</title>
+        <link rel="stylesheet" href="/css/login.css" />
+        <link rel="stylesheet" href="/css/profile.css" />
+    </head>
+    <body>
+        <aside class="sidebar">
+            <h2>FinGuard AI</h2>
+            <nav>
+                <a href="" class="nav-link active" data-target="page-dashboard"
+                    >Dashboard</a
+                >
+                <a href="" class="nav-link" data-target="page-transactions"
+                    >Transações</a
+                >
+                <a href="" class="nav-link" data-target="page-settings"
+                    >Configurações</a
+                >
+            </nav>
+            <button id="logout-btn">Sair</button>
+        </aside>
+
+        <main class="dashboard-container">
+            <section id="page-dashboard" class="content-section active">
+                <header class="dashboard-header">
+                    <h1>Olá, <span id="user-name">Usuário</span></h1>
+                    <p>Resumo da sua inteligência financeira.</p>
+                </header>
+
+                <div class="summary-cards">
+                    <div class="card balance">
+                        <h3>Saldo Total</h3>
+                        <p class="value" id="total-balance">R$ 0,00</p>
+                    </div>
+                    <div class="card expenses">
+                        <h3>Gastos (30 dias)</h3>
+                        <p class="value" id="monthly-expenses">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="main-content-grid">
+                    <div class="quick-view card">
+                        <h2>Atividades Recentes</h2>
+                        <div id="recent-activities">
+                            <p>Nenhuma atividade recente.</p>
+                        </div>
+                    </div>
+
+                    <aside class="ai-insights">
+                        <div class="ai-header">
+                            <h2>Conselhos da IA</h2>
+                        </div>
+                        <div class="insight-card">
+                            <p id="ai-advice">"Analisando seus dados..."</p>
+                        </div>
+                        <div class="shopping-suggestions">
+                            <h3>Sugestões Inteligentes</h3>
+                            <ul id="suggestions-list">
+                                <li>Processando seus hábitos...</li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section id="page-transactions" class="content-section">
+                <header class="section-header">
+                    <h1>Minhas Transações</h1>
+                    <p>
+                        Importe seu extrato ou gerencie seus gastos manualmente.
+                    </p>
+                </header>
+
+                <div class="import-container card">
+                    <div class="upload-box" id="drop-zone">
+                        <div class="upload-icon">📄</div>
+                        <h3>Importar Extrato Bancário</h3>
+                        <p id="upload-instruction">
+                            Arraste seu arquivo PDF ou CSV aqui
+                        </p>
+
+                        <input
+                            type="file"
+                            id="file-upload"
+                            hidden
+                            accept=".pdf,.csv"
+                        />
+
+                        <button
+                            id="btn-secondary"
+                            class="btn-secondary"
+                            onclick="
+                                document.getElementById('file-upload').click()
+                            "
+                        >
+                            Selecionar Arquivo
+                        </button>
+
+                        <div
+                            id="file-info"
+                            class="file-feedback-area"
+                            style="display: none"
+                        >
+                            <p id="file-name"></p>
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 10px;
+                                    justify-content: center;
+                                    margin-top: 15px;
+                                "
+                            >
+                                <button class="btn-main" id="btn-send-file">
+                                    Enviar Arquivo
+                                </button>
+
+                                <button
+                                    class="btn-secondary"
+                                    id="btn-remove-file"
+                                    style="
+                                        border-color: #ff1744;
+                                        color: #ff1744;
+                                    "
+                                >
+                                    Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <span>OU</span>
+                    </div>
+
+                    <div class="manual-action">
+                        <p>Prefere fazer do zero?</p>
+                        <button class="btn-main" id="btn-manual-entry">
+                            Inserir Transação Manualmente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container card">
+                    <div class="table-header">
+                        <h2>Histórico Recente</h2>
+                        <div class="table-filters">
+                            <input
+                                type="text"
+                                id="filter-desc"
+                                placeholder="Buscar por descrição..."
+                            />
+                        </div>
+                    </div>
+                    <div class="responsive-table">
+                        <table id="full-transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-body">
+                                <tr class="empty-row">
+                                    <td colspan="5">
+                                        Nenhuma transação encontrada. Importe um
+                                        arquivo para começar!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <script type="module" src="../js/profile.js"></script>
+    </body>
+</html>

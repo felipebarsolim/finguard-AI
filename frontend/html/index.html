@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <title>FinGuard AI - Login</title>
+        <link rel="stylesheet" href="/css/login.css" />
+    </head>
+    <body>
+        <div class="left">
+            <div class="welcome-container">
+                <h1>FinGuard AI</h1>
+                <p>Domine suas finanças com inteligência e simplicidade.</p>
+                <img
+                    src="../assets/finance-illustration.svg"
+                    alt="Ilustração Financeira"
+                    class="welcome-img"
+                />
+            </div>
+        </div>
+
+        <div class="login-card">
+            <h2>Login</h2>
+            <form action="">
+                <input type="email" id="email" placeholder="E-mail" />
+                <input type="password" id="password" placeholder="Senha" />
+            </form>
+
+            <div class="login-utils">
+                <label>
+                    <input type="checkbox" id="remember" /> Lembrar de mim
+                </label>
+                <a href="#" class="forgot-link">Esqueceu a senha?</a>
+            </div>
+
+            <p id="error-msg" class="error">E-mail ou senha incorretos.</p>
+            <button id="login">Entrar</button>
+
+            <p class="signup-text">
+                Não tem uma conta? <a href="" id="sigup-page">Cadastre-se</a>
+            </p>
+        </div>
+
+        <script type="module" src="../js/login.js"></script>
+    </body>
+</html>

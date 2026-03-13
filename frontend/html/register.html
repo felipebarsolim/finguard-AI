@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FinGuard AI - Criar Conta</title>
+        <link rel="stylesheet" href="../css/register.css" />
+    </head>
+    <body>
+        <div class="left">
+            <div class="welcome-container">
+                <h1>FinGuard AI</h1>
+                <p>
+                    Comece sua jornada rumo à liberdade financeira hoje mesmo.
+                </p>
+                <img
+                    src="../assets/finance-illustration.svg"
+                    alt="Ilustração Financeira"
+                    class="welcome-img"
+                />
+            </div>
+        </div>
+
+        <div class="login-card">
+            <h2>Criar Conta</h2>
+
+            <form id="signup-form">
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Nome Completo"
+                    required
+                />
+                <input type="email" id="email" placeholder="E-mail" required />
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Senha"
+                    required
+                />
+                <input
+                    type="password"
+                    id="confirm-password"
+                    placeholder="Confirmar Senha"
+                    required
+                />
+            </form>
+
+            <p id="error-msg" class="error">As senhas não coincidem.</p>
+
+            <button id="signup-btn">Cadastrar</button>
+
+            <p class="signup-text">
+                Já possui uma conta? <a href="" id="login-page">Faça Login</a>
+            </p>
+        </div>
+
+        <script type="module" src="../js/signup.js"></script>
+    </body>
+</html>
