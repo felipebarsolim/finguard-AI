@@ -65,9 +65,6 @@ body {
     border-color: #ff1744;
 }
 
-/* ==========================================================================
-   8. FORMULÁRIO DE IMPORTAÇÃO MANUAL
-   ========================================================================== */
 .import-manual {
     background: linear-gradient(145deg, #1a1a1a, #1f1f1f);
     border: 1px solid #333;
@@ -75,7 +72,6 @@ body {
     margin-bottom: 30px;
 }
 
-/* Cabeçalho do formulário */
 .manual-form-header {
     display: flex;
     justify-content: space-between;
@@ -107,7 +103,6 @@ body {
     border: solid 1px;
 }
 
-/* Grid de Inputs */
 .transaction-form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -284,6 +279,13 @@ body {
     border: 1px solid #333;
     transition: transform 0.3s;
 }
+.card-actives {
+    background-color: #1a1a1a;
+    margin-top: 10px;
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #333;
+}
 
 .card:hover {
     transform: translateY(-5px);
@@ -299,6 +301,34 @@ body {
 .card .value {
     font-size: 2rem;
     font-weight: 800;
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 109, 0, 0.2); /* Fundo do círculo (laranja claro) */
+    border-top: 3px solid rgb(134, 134, 134); /* Parte que gira (laranja forte) */
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Classe para centralizar o spinner no card se necessário */
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .balance .value {
@@ -423,6 +453,7 @@ td {
     color: #ccc;
     font-size: 0.95rem;
 }
+
 tr:hover td {
     background-color: #222;
 }

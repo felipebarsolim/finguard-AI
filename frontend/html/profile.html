@@ -34,11 +34,15 @@
                 <div class="summary-cards">
                     <div class="card balance">
                         <h3>Saldo Total</h3>
-                        <p class="value" id="total-balance">R$ 0,00</p>
+                        <p class="value" id="total-balance">
+                            <span class="loader"></span>
+                        </p>
                     </div>
                     <div class="card expenses">
                         <h3>Gastos (30 dias)</h3>
-                        <p class="value" id="monthly-expenses">R$ 0,00</p>
+                        <p class="value" id="monthly-expenses">
+                            <span class="loader"></span>
+                        </p>
                     </div>
                 </div>
 
@@ -46,7 +50,7 @@
                     <div class="quick-view card">
                         <h2>Atividades Recentes</h2>
                         <div id="recent-activities">
-                            <p>Nenhuma atividade recente.</p>
+                            <p><span class="loader"></span></p>
                         </div>
                     </div>
 
@@ -305,11 +309,13 @@
                     <div class="table-header">
                         <h2>Histórico Recente</h2>
                         <div class="table-filters">
-                            <input
-                                type="text"
-                                id="filter-desc"
-                                placeholder="Buscar por descrição..."
-                            />
+                            <form class="filter-desc">
+                                <input
+                                    type="search"
+                                    id="filter-desc"
+                                    placeholder="Buscar por descrição..."
+                                />
+                            </form>
                         </div>
                     </div>
                     <div class="responsive-table">
@@ -320,17 +326,10 @@
                                     <th>Descrição</th>
                                     <th>Categoria</th>
                                     <th>Valor</th>
-                                    <th>Status</th>
+                                    <th>Tipo</th>
                                 </tr>
                             </thead>
-                            <tbody id="transactions-body">
-                                <tr class="empty-row">
-                                    <td colspan="5">
-                                        Nenhuma transação encontrada. Importe um
-                                        arquivo para começar!
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <tbody id="transactions-body"></tbody>
                         </table>
                     </div>
                 </div>

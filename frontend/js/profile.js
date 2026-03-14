@@ -1,6 +1,9 @@
 import { validateAccess } from "./utils/validateAcess.js";
 import { link } from "./utils/links.js";
-import { fetchRequestAuthPost } from "./utils/fetchRequest.js";
+import {
+    fetchRequestAuthPost,
+    fetchRequestAuthGet,
+} from "./utils/fetchRequest.js";
 
 const data = await validateAccess();
 
@@ -12,6 +15,177 @@ const userName = document.querySelector("#user-name");
 userName.innerText = data.user.name;
 
 //transações
+
+const getTransactionsAtServer = async () => {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetchRequestAuthGet(token, link.transaction);
+
+    if (response.status === 500) {
+        const { message } = response;
+        alert(message);
+    } else {
+        const { transactions } = response;
+        return transactions;
+    }
+};
+
+const renderHistoric = (transactions, search) => {
+    const historicTable = document.querySelector("#transactions-body");
+
+    if (!search) {
+        if (!historicTable.innerText)
+            historicTable.innerText = "Nenhuma Transação encontrada!";
+        historicTable.innerText = "";
+
+        transactions.slice(0, 7).forEach((transaction) => {
+            const value = parseFloat(transaction.amount).toLocaleString(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL",
+                },
+            );
+
+            const date = new Date(transaction.date);
+            const dateBr = date.toLocaleDateString("pt-BR", {
+                timeZone: "UTC",
+            });
+
+            const tR = document.createElement("tr");
+            tR.classList.add("empty-row");
+
+            const dateTh = document.createElement("th");
+            dateTh.innerText = dateBr;
+            const descriptionTh = document.createElement("th");
+            descriptionTh.innerText = transaction.description;
+            const categoryTh = document.createElement("th");
+            categoryTh.innerText = transaction.category;
+            const amountTh = document.createElement("th");
+            amountTh.innerText = value;
+            const typeTh = document.createElement("th");
+            typeTh.innerText = `${transaction.type === "income" ? "Renda" : "Gasto"}`;
+
+            tR.appendChild(dateTh);
+            tR.appendChild(descriptionTh);
+            tR.appendChild(categoryTh);
+            tR.appendChild(amountTh);
+            tR.appendChild(typeTh);
+
+            historicTable.appendChild(tR);
+        });
+    } else {
+        historicTable.innerText = "";
+        transactions
+            .filter((transaction) => transaction.description.includes(search))
+            .forEach((transaction) => {
+                if (!transaction) {
+                    historicTable.innerHTML = "Transação não encontrada";
+                }
+                const value = parseFloat(transaction.amount).toLocaleString(
+                    "pt-BR",
+                    {
+                        style: "currency",
+                        currency: "BRL",
+                    },
+                );
+
+                const date = new Date(transaction.date);
+                const dateBr = date.toLocaleDateString("pt-BR", {
+                    timeZone: "UTC",
+                });
+
+                const tR = document.createElement("tr");
+                tR.classList.add("empty-row");
+
+                const dateTh = document.createElement("th");
+                dateTh.innerText = dateBr;
+                const descriptionTh = document.createElement("th");
+                descriptionTh.innerText = transaction.description;
+                const categoryTh = document.createElement("th");
+                categoryTh.innerText = transaction.category;
+                const amountTh = document.createElement("th");
+                amountTh.innerText = value;
+                const typeTh = document.createElement("th");
+                typeTh.innerText = `${transaction.type === "income" ? "Renda" : "Gasto"}`;
+
+                tR.appendChild(dateTh);
+                tR.appendChild(descriptionTh);
+                tR.appendChild(categoryTh);
+                tR.appendChild(amountTh);
+                tR.appendChild(typeTh);
+
+                historicTable.appendChild(tR);
+            });
+    }
+};
+
+const renderDashboard = (transactions) => {
+    const balance = document.querySelector("#total-balance");
+    const expense = document.querySelector("#monthly-expenses");
+    const active = document.querySelector("#recent-activities");
+
+    if (!active.innerText) {
+        active.innerText = "Nenhuma atividade recente.";
+    }
+
+    active.innerHTML = "";
+
+    transactions.slice(0, 3).forEach((transaction) => {
+        const value = parseFloat(transaction.amount).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
+
+        const row = document.createElement("p");
+
+        const boxRow = document.createElement("div");
+        boxRow.classList.add("card-actives");
+
+        const date = new Date(transaction.date);
+        const dateBr = date.toLocaleDateString("pt-BR", {
+            timeZone: "UTC",
+        });
+
+        if (transaction.type === "income") {
+            row.innerHTML = `<strong>${dateBr}</strong>: Você recebeu ${value} de ${transaction.description}`;
+            boxRow.appendChild(row);
+            active.appendChild(boxRow);
+        }
+        if (transaction.type === "expense") {
+            row.innerHTML = `<strong>${dateBr}</strong>: Você Gastou ${value} em ${transaction.description}`;
+            boxRow.appendChild(row);
+            active.appendChild(boxRow);
+        }
+    });
+
+    const balanceInicial = transactions
+        .filter((transaction) => transaction.type === "income")
+        .reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.amount);
+        }, 0);
+
+    const totalExpense = transactions
+        .filter((transaction) => transaction.type === "expense")
+        .reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.amount);
+        }, 0);
+
+    const totalBalance = balanceInicial - totalExpense;
+
+    expense.innerText = totalExpense.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+
+    balance.innerText = totalBalance.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+
+    if (totalBalance < 0) {
+        balance.style.color = "red";
+    }
+};
 
 const sendFileToServer = () => {
     const fileInput = document.getElementById("file-upload");
@@ -92,6 +266,9 @@ const getDataTransaction = () => {
 
 const subimitTransaction = async () => {
     const token = localStorage.getItem("accessToken");
+    const button = document.querySelector("#submit-transaction");
+
+    button.innerHTML = "<span class='loader'></span>";
     const response = await fetchRequestAuthPost(
         transactionPack,
         link.transaction,
@@ -103,12 +280,14 @@ const subimitTransaction = async () => {
         alert(message);
     } else {
         const { message, count, transaction } = response;
-        alert(message);
+        alert("Transação Criada com sucesso");
         document.querySelector("#preview-body").innerHTML = "";
         const headTransactions = document.querySelector(
             "#head-preview-transactions",
         );
         headTransactions.style.display = "none";
+        location.href = link.profile;
+        button.innerText = "Subir Transação";
     }
 };
 
@@ -187,6 +366,8 @@ const tooglePage = (e) => {
     const pageTarget = page.dataset.target;
 
     renderSection(pageTarget);
+
+    if (pageTarget === "page-transactions") renderHistoric(transactions);
 };
 
 const logout = () => {
@@ -220,6 +401,11 @@ document
     .querySelector("#btn-send-file")
     .addEventListener("click", sendFileToServer);
 
+document.querySelector(".filter-desc").addEventListener("submit", (e) => {
+    e.preventDefault();
+    renderHistoric(transactions, e.target[0].value);
+});
+
 //Sidebar navegation
 
 const links = document.querySelectorAll("a");
@@ -229,3 +415,6 @@ links.forEach((link) => {
         tooglePage(e);
     });
 });
+
+const transactions = await getTransactionsAtServer();
+renderDashboard(transactions);
