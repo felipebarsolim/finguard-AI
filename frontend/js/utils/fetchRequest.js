@@ -7,7 +7,7 @@ export const fetchRequestPost = async (pack, route) => {
         body: JSON.stringify(pack),
     });
 
-    return await response.json();
+    return response;
 };
 
 export const fetchRequestAuthGet = async (token, route) => {

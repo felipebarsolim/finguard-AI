@@ -14,7 +14,9 @@ let file;
 const userName = document.querySelector("#user-name");
 userName.innerText = data.user.name;
 
-//transações
+/* ------------------------------------------------------------------
+    TRANSACIONS PAGE
+---------------------------------------------------------------------*/
 
 const getTransactionsAtServer = async () => {
     const token = localStorage.getItem("accessToken");
@@ -37,7 +39,7 @@ const renderHistoric = (transactions, search) => {
             historicTable.innerText = "Nenhuma Transação encontrada!";
         historicTable.innerText = "";
 
-        transactions.slice(0, 7).forEach((transaction) => {
+        transactions.slice(0, 10).forEach((transaction) => {
             const value = parseFloat(transaction.amount).toLocaleString(
                 "pt-BR",
                 {
@@ -116,74 +118,6 @@ const renderHistoric = (transactions, search) => {
 
                 historicTable.appendChild(tR);
             });
-    }
-};
-
-const renderDashboard = (transactions) => {
-    const balance = document.querySelector("#total-balance");
-    const expense = document.querySelector("#monthly-expenses");
-    const active = document.querySelector("#recent-activities");
-
-    if (!active.innerText) {
-        active.innerText = "Nenhuma atividade recente.";
-    }
-
-    active.innerHTML = "";
-
-    transactions.slice(0, 3).forEach((transaction) => {
-        const value = parseFloat(transaction.amount).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        });
-
-        const row = document.createElement("p");
-
-        const boxRow = document.createElement("div");
-        boxRow.classList.add("card-actives");
-
-        const date = new Date(transaction.date);
-        const dateBr = date.toLocaleDateString("pt-BR", {
-            timeZone: "UTC",
-        });
-
-        if (transaction.type === "income") {
-            row.innerHTML = `<strong>${dateBr}</strong>: Você recebeu ${value} de ${transaction.description}`;
-            boxRow.appendChild(row);
-            active.appendChild(boxRow);
-        }
-        if (transaction.type === "expense") {
-            row.innerHTML = `<strong>${dateBr}</strong>: Você Gastou ${value} em ${transaction.description}`;
-            boxRow.appendChild(row);
-            active.appendChild(boxRow);
-        }
-    });
-
-    const balanceInicial = transactions
-        .filter((transaction) => transaction.type === "income")
-        .reduce((acc, transaction) => {
-            return acc + parseFloat(transaction.amount);
-        }, 0);
-
-    const totalExpense = transactions
-        .filter((transaction) => transaction.type === "expense")
-        .reduce((acc, transaction) => {
-            return acc + parseFloat(transaction.amount);
-        }, 0);
-
-    const totalBalance = balanceInicial - totalExpense;
-
-    expense.innerText = totalExpense.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    });
-
-    balance.innerText = totalBalance.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    });
-
-    if (totalBalance < 0) {
-        balance.style.color = "red";
     }
 };
 
@@ -341,7 +275,84 @@ const toggleManualImput = () => {
     importManual.style.display = "none";
 };
 
-//navegation
+/* ------------------------------------------------------------------
+    DASHBOARD PAGE
+---------------------------------------------------------------------*/
+
+const renderDashboard = (transactions) => {
+    const balance = document.querySelector("#total-balance");
+    const expense = document.querySelector("#monthly-expenses");
+    const active = document.querySelector("#recent-activities");
+
+    if (!active.innerText) {
+        active.innerText = "Nenhuma atividade recente.";
+    }
+
+    active.innerHTML = "";
+
+    transactions.slice(0, 3).forEach((transaction) => {
+        const value = parseFloat(transaction.amount).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
+
+        const row = document.createElement("p");
+
+        const boxRow = document.createElement("div");
+        boxRow.classList.add("card-actives");
+
+        const date = new Date(transaction.date);
+        const dateBr = date.toLocaleDateString("pt-BR", {
+            timeZone: "UTC",
+        });
+
+        if (transaction.type === "income") {
+            row.innerHTML = `<strong>${dateBr}</strong>: Você recebeu ${value} de ${transaction.description}`;
+            boxRow.appendChild(row);
+            active.appendChild(boxRow);
+        }
+        if (transaction.type === "expense") {
+            row.innerHTML = `<strong>${dateBr}</strong>: Você Gastou ${value} em ${transaction.description}`;
+            boxRow.appendChild(row);
+            active.appendChild(boxRow);
+        }
+    });
+
+    const balanceInicial = transactions
+        .filter((transaction) => transaction.type === "income")
+        .reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.amount);
+        }, 0);
+
+    const totalExpense = transactions
+        .filter((transaction) => transaction.type === "expense")
+        .reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.amount);
+        }, 0);
+
+    const totalBalance = balanceInicial - totalExpense;
+
+    expense.innerText = totalExpense.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+
+    balance.innerText = totalBalance.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+
+    if (totalBalance < 0) {
+        balance.style.color = "red";
+    }
+};
+
+const transactions = await getTransactionsAtServer();
+renderDashboard(transactions);
+
+/* ------------------------------------------------------------------
+    NAVEGATION
+---------------------------------------------------------------------*/
 
 const renderSection = (pageTarget) => {
     document.querySelectorAll(".content-section").forEach((section) => {
@@ -375,6 +386,18 @@ const logout = () => {
     location.href = link.login;
 };
 
+const links = document.querySelectorAll("a");
+
+links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+        tooglePage(e);
+    });
+});
+
+/* ------------------------------------------------------------------
+    EVENTS LISTENER
+---------------------------------------------------------------------*/
+
 document
     .querySelector("#btn-secondary")
     .addEventListener("click", renderSendToServer);
@@ -405,16 +428,3 @@ document.querySelector(".filter-desc").addEventListener("submit", (e) => {
     e.preventDefault();
     renderHistoric(transactions, e.target[0].value);
 });
-
-//Sidebar navegation
-
-const links = document.querySelectorAll("a");
-
-links.forEach((link) => {
-    link.addEventListener("click", (e) => {
-        tooglePage(e);
-    });
-});
-
-const transactions = await getTransactionsAtServer();
-renderDashboard(transactions);

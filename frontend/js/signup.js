@@ -17,14 +17,12 @@ const signUp = async () => {
             password,
         };
 
-        const route = link.register;
-
-        const response = await fetchRequestPost(pack, route);
+        const response = await fetchRequestPost(pack, link.register);
 
         if (response.status === 500) {
             alert("Erro ao registrar");
         }
-        if (response.status === 400) {
+        if (response.status === 403) {
             alert("Usuario já cadastrado");
         }
         if (response.status === 201) {

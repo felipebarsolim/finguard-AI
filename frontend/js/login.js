@@ -14,7 +14,7 @@ const handleLogin = async () => {
 
     const response = await fetchRequestPost(pack, route);
 
-    const { token } = response;
+    const { token } = await response.json();
 
     if (!token) {
         const { message } = response;
