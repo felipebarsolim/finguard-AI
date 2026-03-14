@@ -6,4 +6,6 @@ export const link = {
     login: `${defaultLink}/login`,
     register: `${defaultLink}/register`,
     validate: `${defaultLink}/profile/validate`,
+    transaction: `${defaultLink}/transactions`,
+    transactionFile: `${defaultLink}/transactions/file`,
 };

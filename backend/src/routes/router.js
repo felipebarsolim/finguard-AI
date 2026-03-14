@@ -23,6 +23,12 @@ router.post("/login", login);
 
 router.post("/transactions", authenticateToken, addTransactions);
 
+router.post("/transactions/file", authenticateToken, (req, res) => {
+    res.status(200).json({
+        message: "sucess",
+    });
+});
+
 router.get("/profile/validate", authenticateToken, (req, res) => {
     res.status(200).json({
         user: req.user,
