@@ -66,6 +66,275 @@
                     </aside>
                 </div>
             </section>
+
+            <section id="page-transactions" class="content-section">
+                <header class="section-header">
+                    <h1>Minhas Transações</h1>
+                    <p>
+                        Importe seu extrato ou gerencie seus gastos manualmente.
+                    </p>
+                </header>
+
+                <div
+                    class="import-manual card"
+                    id="import-manual"
+                    style="display: none"
+                >
+                    <div class="manual-form-header">
+                        <h3 id="title-manual-form">Nova Transação Manual</h3>
+                        <button id="btn-close-manual" class="btn-close">
+                            ✕
+                        </button>
+                    </div>
+
+                    <form id="form-manual-transaction" class="transaction-form">
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" id="manual-date" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descrição</label>
+                            <input
+                                type="text"
+                                id="manual-desc"
+                                placeholder="Ex: Assinatura Netflix"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <select id="manual-category" required>
+                                <option value="Salário">Salário</option>
+                                <option value="Renda Extra">Renda Extra</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Lazer">Lazer</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Contas Fixas">
+                                    Contas Fixas
+                                </option>
+                                <option value="Contas Fixas">
+                                    Alimentação
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Valor (R$)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                id="manual-value"
+                                placeholder="0,00"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-actions"></div>
+                    </form>
+                    <div id="button-submit-transaction">
+                        <button
+                            type="submit"
+                            class="btn-main"
+                            id="add-transaction"
+                        >
+                            Adicionar
+                        </button>
+                        <button
+                            id="submit-transaction"
+                            class="btn-main"
+                            style="display: none"
+                        >
+                            Subir Transação
+                        </button>
+                    </div>
+
+                    <div class="preview" id="preview-transaction">
+                        <table style="width: 100%; border-collapse: collapse">
+                            <thead
+                                style="
+                                    display: none;
+                                    width: 100%;
+                                    margin-top: 20px;
+                                    table-layout: fixed;
+                                "
+                                id="head-preview-transactions"
+                            >
+                                <tr
+                                    style="
+                                        border-bottom: 2px solid #333;
+                                        width: 100%;
+                                    "
+                                >
+                                    <th
+                                        style="
+                                            width: 20%;
+                                            text-align: left;
+                                            padding: 12px;
+                                            color: #999;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Data
+                                    </th>
+                                    <th
+                                        style="
+                                            width: 40%;
+                                            text-align: left;
+                                            padding: 12px;
+                                            color: #999;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Descrição
+                                    </th>
+                                    <th
+                                        style="
+                                            width: 15%;
+                                            text-align: left;
+                                            padding: 12px;
+                                            color: #999;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Categoria
+                                    </th>
+                                    <th
+                                        style="
+                                            width: 15%;
+                                            text-align: left;
+                                            padding: 12px;
+                                            color: #999;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Valor
+                                    </th>
+                                    <th
+                                        style="
+                                            width: 10%;
+                                            text-align: left;
+                                            padding: 12px;
+                                            color: #999;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Tipo
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="preview-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="import-container card" id="import-container-card">
+                    <div class="upload-box" id="drop-zone">
+                        <div class="upload-icon">📄</div>
+                        <h3>Importar Extrato Bancário</h3>
+                        <p id="upload-instruction">
+                            Arraste seu arquivo PDF ou CSV aqui
+                        </p>
+
+                        <input
+                            type="file"
+                            id="file-upload"
+                            hidden
+                            accept=".pdf,.csv"
+                        />
+
+                        <button
+                            id="btn-secondary"
+                            class="btn-secondary"
+                            onclick="
+                                document.getElementById('file-upload').click()
+                            "
+                        >
+                            Selecionar Arquivo
+                        </button>
+
+                        <div
+                            id="file-info"
+                            class="file-feedback-area"
+                            style="display: none"
+                        >
+                            <p id="file-name"></p>
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 10px;
+                                    justify-content: center;
+                                    margin-top: 15px;
+                                "
+                            >
+                                <button class="btn-main" id="btn-send-file">
+                                    Enviar Arquivo
+                                </button>
+
+                                <button
+                                    class="btn-secondary"
+                                    id="btn-remove-file"
+                                    style="
+                                        border-color: #ff1744;
+                                        color: #ff1744;
+                                    "
+                                >
+                                    Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <span>OU</span>
+                    </div>
+
+                    <div class="manual-action">
+                        <p>Prefere fazer do zero?</p>
+                        <button class="btn-main" id="btn-manual-entry">
+                            Inserir Transação Manualmente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container card">
+                    <div class="table-header">
+                        <h2>Histórico Recente</h2>
+                        <div class="table-filters">
+                            <input
+                                type="text"
+                                id="filter-desc"
+                                placeholder="Buscar por descrição..."
+                            />
+                        </div>
+                    </div>
+                    <div class="responsive-table">
+                        <table id="full-transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-body">
+                                <tr class="empty-row">
+                                    <td colspan="5">
+                                        Nenhuma transação encontrada. Importe um
+                                        arquivo para começar!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
         <script type="module" src="../js/profile.js"></script>
     </body>
