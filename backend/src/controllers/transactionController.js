@@ -69,6 +69,52 @@ export const addTransactions = async (req, res) => {
     }
 };
 
+export const addTransactionsFromIA = async (req, res) => {
+    const userId = req.user.id;
+
+    const data = Array.isArray(req.body) ? req.body : [req.body];
+    //req.body é um array? se sim, retorne ele. se não, retorne ele como array
+
+    const [balance, ...transactionsData] = data;
+    const { inicialBalance } = balance;
+
+    try {
+        const query = `
+        INSERT INTO transactions (user_id, description, amount, type, category, date)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *`;
+
+        const createdTransactions = [];
+
+        for (const item of transactionsData) {
+            const { description, amount, type, category, date } = item;
+
+            const values = [userId, description, amount, type, category, date];
+
+            const { rows } = await database.query(query, values);
+
+            createdTransactions.push(rows[0]);
+        }
+
+        res.status(201).json({
+            message:
+                data.length > 1
+                    ? "transactions created"
+                    : "transaction created",
+            count: createdTransactions.length,
+            transaction: { createdTransactions, inicialBalance },
+        });
+    } catch (err) {
+        console.error(
+            "ERROR in transactionController.js in addTransaction function, " +
+                err,
+        );
+        res.status(500).json({
+            message: "Internal Error",
+        });
+    }
+};
+
 export const deleteTransactions = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;

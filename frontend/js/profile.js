@@ -121,28 +121,46 @@ const renderHistoric = (transactions, search) => {
     }
 };
 
-const sendFileToServer = () => {
-    const fileInput = document.getElementById("file-upload");
-    fileInput.addEventListener("change", function () {
-        if (file && file.length > 0) {
-            uploadFile(file);
-        }
-    });
+let selectedFile = null;
+
+const sendFileToServer = async () => {
+    if (selectedFile) {
+        await uploadFile(selectedFile);
+    } else {
+        alert("Por favor, selecione um arquivo primeiro");
+    }
 };
 
 const uploadFile = async (file) => {
     const token = localStorage.getItem("accessToken");
+    const fileInfo = document.getElementById("file-info");
+
+    fileInfo.innerHTML = `Enviando arquivo para leitura <span class='loader'></span>`;
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", selectedFile);
 
-    const response = await fetchRequestAuthPost(
-        formData,
-        link.transactionFile,
-        token,
-    );
+    const response = await fetch(link.transactionFile, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
 
-    alert(response.message);
+    if (response.ok) {
+        const { transaction } = await response.json();
+        const { createdTransactions, inicialBalance } = transaction;
+
+        localStorage.setItem("inicialBalance", inicialBalance);
+
+        renderDashboard(createdTransactions, parseFloat(inicialBalance));
+
+        location.href = link.profile;
+    } else {
+        alert("Erro ao ler arquivo");
+        location.href = link.profile;
+    }
 };
 
 const renderSendToServer = () => {
@@ -155,9 +173,9 @@ const renderSendToServer = () => {
     fileInput.addEventListener("change", function () {
         console.log(this.files);
         if (this.files && this.files.length > 0) {
-            file = this.files[0];
+            selectedFile = this.files[0];
 
-            fileNameDisplay.textContent = `📄 Arquivo selecionado: ${file.name}`;
+            fileNameDisplay.textContent = `📄 Arquivo selecionado: ${selectedFile.name}`;
 
             fileInfo.style.display = "block";
 
@@ -279,7 +297,7 @@ const toggleManualImput = () => {
     DASHBOARD PAGE
 ---------------------------------------------------------------------*/
 
-const renderDashboard = (transactions) => {
+const renderDashboard = (transactions, inicialBalance = 0) => {
     const balance = document.querySelector("#total-balance");
     const expense = document.querySelector("#monthly-expenses");
     const active = document.querySelector("#recent-activities");
@@ -330,7 +348,7 @@ const renderDashboard = (transactions) => {
             return acc + parseFloat(transaction.amount);
         }, 0);
 
-    const totalBalance = balanceInicial - totalExpense;
+    const totalBalance = balanceInicial - totalExpense + inicialBalance;
 
     expense.innerText = totalExpense.toLocaleString("pt-BR", {
         style: "currency",
@@ -348,7 +366,8 @@ const renderDashboard = (transactions) => {
 };
 
 const transactions = await getTransactionsAtServer();
-renderDashboard(transactions);
+const inicialBalance = localStorage.getItem("inicialBalance") ?? 0;
+renderDashboard(transactions, parseFloat(inicialBalance));
 
 /* ------------------------------------------------------------------
     NAVEGATION
