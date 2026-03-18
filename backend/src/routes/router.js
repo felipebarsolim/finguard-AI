@@ -16,6 +16,8 @@ import {
 } from "../controllers/transactionController.js";
 import { extrairTextoPDF } from "../utils/extractPDF.js";
 import { responseAI } from "../controllers/openAi.js";
+import { reportAI, getReports } from "../controllers/reportAI.js";
+import { shoppingAi } from "../controllers/shoppingAi.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,7 +65,7 @@ router.post(
                 valor (float positivo), tipo(income/expense), categoria, 
                 saldo inicial mais antigo.
                 2. Saída: APENAS um array JSON: 
-                [{"inicialBalance": "saldo mais antigo"},{"date":"data","description":"desc","amount":valor, "type": "tipo(income ou expense)", "category": (exemplo: lazer, salário, pix, educação, renda extra, (não usar "outros"))}].
+                [{"inicialBalance": "saldo mais antigo"},{"date":"data","description":"desc","amount":valor, "type": "tipo(income ou expense)", "category": (exemplo: lazer, cartão, salário, pix, educação, renda extra, contas(agua, luz, internet) (não usar "outros"))}].
                 3. Ignore cabeçalhos e saldos(execeto o saldo inicial mais antigo).
                 4. Se texto não tiver os dados pra extração, retorne apenas: {"error": true}.
 
@@ -89,6 +91,10 @@ router.post(
         }
     },
 );
+
+router.post("/transactions/toAI", authenticateToken, reportAI);
+
+router.post("/shoppingAi", authenticateToken, shoppingAi);
 
 router.get("/profile/validate", authenticateToken, (req, res) => {
     res.status(200).json({
@@ -143,6 +149,8 @@ router.get("/profile", (req, res) => {
 router.get("/balance", authenticateToken, getBalance);
 
 router.get("/transactions/filter", authenticateToken, getTransactionByDate);
+
+router.get("/reports-ai", authenticateToken, getReports);
 
 router.delete("/transaction/:id", authenticateToken, deleteTransactions);
 

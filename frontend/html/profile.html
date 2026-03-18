@@ -17,6 +17,9 @@
                 <a href="" class="nav-link" data-target="page-transactions"
                     >Transações</a
                 >
+                <a href="" class="nav-link" data-target="page-report"
+                    >Relatórios Financeiros</a
+                >
                 <a href="" class="nav-link" data-target="page-settings"
                     >Configurações</a
                 >
@@ -54,18 +57,18 @@
                         </div>
                     </div>
 
-                    <aside class="ai-insights">
-                        <div class="ai-header">
+                    <aside class=" card ai-insights">
+                        <!-- <div class="ai-header">
                             <h2>Conselhos da IA</h2>
                         </div>
                         <div class="insight-card">
                             <p id="ai-advice">"Analisando seus dados..."</p>
-                        </div>
+                        </div> -->
                         <div class="shopping-suggestions">
                             <h3>Sugestões Inteligentes</h3>
-                            <ul id="suggestions-list">
-                                <li>Processando seus hábitos...</li>
-                            </ul>
+                            <div id="ai-ads-container">
+                                <p class="card" id="shopping-ai">Sem dados. Gere um relatório financeiro</p>
+                            </div>
                         </div>
                     </aside>
                 </div>
@@ -341,7 +344,66 @@
                     </div>
                 </div>
             </section>
+
+            <section id="page-report" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-chart-line"></i> Financial Report</h2>
+                    <p>Gere um relatório completo sobre sua saúde financeira</p>
+                    <button
+                        id="generate-ai-report"
+                        class="btn-ai"
+                    >
+                        <i class="fas fa-magic"></i> Atualizar Análise
+                        Inteligente
+                    </button>
+                    <div id="message-load-report" class="card" style="display: none;">
+                        Gerando seu relatório personalizado... <span class="loader"></span>
+                    </div>
+                </div>
+
+                <div class="main-section-report" id="main-section-report" style="display: none">
+                    <div class="report-grid">
+                        <div class="card report-card chart-box">
+                            <h3>Distribuição de Gastos</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                        <div class="card report-card ai-explanation">
+                            <h3>
+                                <i class="fas fa-robot"></i> Análise de
+                                Categorias
+                            </h3>
+                            <div
+                                id="ai-category-text"
+                                class="ai-text-placeholder"
+                            >
+                                Aguardando dados para analisar suas
+                                categorias...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-grid reverse">
+                        <div class="card report-card ai-explanation">
+                            <h3>
+                                <i class="fas fa-bullseye"></i> Metas e Hábitos
+                            </h3>
+                            <div
+                                id="ai-habits-text"
+                                class="ai-text-placeholder"
+                            >
+                                Aqui a IA explicará seus hábitos de consumo
+                                mensais.
+                            </div>
+                        </div>
+                        <div class="card report-card chart-box">
+                            <h3>Entradas vs Saídas</h3>
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
         <script type="module" src="../js/profile.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </body>
 </html>

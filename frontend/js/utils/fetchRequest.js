@@ -21,14 +21,18 @@ export const fetchRequestAuthGet = async (token, route) => {
 };
 
 export const fetchRequestAuthPost = async (pack, route, token) => {
-    const response = await fetch(route, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(pack),
-    });
+    try {
+        const response = await fetch(route, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(pack),
+        });
 
-    return await response.json();
+        return await response.json();
+    } catch (err) {
+        console.error("ERRO, " + err);
+    }
 };

@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import { database } from "../config/databaseConnection.js";
+
 const client = new OpenAI({
     apiKey: process.env.API_KEY,
 });

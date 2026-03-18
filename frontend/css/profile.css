@@ -103,6 +103,64 @@ body {
     border: solid 1px;
 }
 
+#shopping-ai {
+    border: none;
+}
+
+.ads-card {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    transition: transform 0.2s;
+}
+
+.ads-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ads-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.ads-info {
+    flex: 1;
+}
+
+.ads-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #252525;
+}
+
+.ads-info p {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.btn-ads {
+    display: inline-block;
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-color: none;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .transaction-form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -148,7 +206,6 @@ body {
     padding-right: 40px !important;
 }
 
-/* Efeito de foco: podemos mudar a cor da seta para branco ou manter laranja */
 #manual-category:focus {
     border-color: #ff6d00 !important;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -161,7 +218,7 @@ body {
     appearance: none;
     -webkit-appearance: none;
     background-color: #0f0f0f;
-    border: 1px solid #333; /* Borda discreta padrão */
+    border: 1px solid #333;
     color: rgba(255, 255, 255, 0.336) !important;
     outline: none !important;
     transition:
@@ -169,23 +226,20 @@ body {
         box-shadow 0.3s ease;
 }
 
-/* Estado de FOCO (Quando o usuário clica para digitar/selecionar) */
 #manual-category:focus,
 #manual-date:focus,
 #manual-desc:focus,
 #manual-value:focus {
-    border-color: #ff6d00 !important; /* Laranja FinGuard */
-    box-shadow: 0 0 8px rgba(255, 109, 0, 0.2) !important; /* Brilho suave laranja */
+    border-color: #ff6d00 !important;
+    box-shadow: 0 0 8px rgba(255, 109, 0, 0.2) !important;
 }
 
-/* Estilização das opções dentro do select (Dropdown) */
 #manual-category option {
     background-color: #1a1a1a;
     color: #fff;
     padding: 10px;
 }
 
-/* Ajuste específico para o botão de salvar no grid */
 .form-actions {
     grid-column: 1 / -1;
     display: flex;
@@ -520,6 +574,60 @@ tr:hover td {
     animation: fadeIn 0.4s ease-in-out forwards;
 }
 
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.report-card {
+    background: rgb(37, 37, 37);
+    padding: 20px;
+    border-radius: 12px;
+    border-color: rgb(37, 37, 37);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    min-height: 300px;
+}
+
+.ai-explanation {
+    background: #1b1b1b;
+    border-left: 4px solid #ff9100;
+}
+
+.ai-text-placeholder {
+    color: #666;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Inverte a ordem no grid para o layout não ficar repetitivo */
+.report-grid.reverse {
+    grid-template-columns: 1fr 1fr;
+}
+
+.chart-box {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+canvas {
+    max-height: 100% !important; /* Garante que o canvas não estoure a div */
+}
+
+.header-actions {
+    margin-bottom: 20px;
+}
+
+#message-load-report {
+    margin-top: 20px;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -560,5 +668,9 @@ tr:hover td {
     .dashboard-container {
         height: auto;
         overflow-y: visible;
+    }
+    .report-grid,
+    .report-grid.reverse {
+        grid-template-columns: 1fr;
     }
 }

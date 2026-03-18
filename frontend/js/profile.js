@@ -31,6 +31,8 @@ const getTransactionsAtServer = async () => {
     }
 };
 
+const transactions = await getTransactionsAtServer();
+
 const renderHistoric = (transactions, search) => {
     const historicTable = document.querySelector("#transactions-body");
 
@@ -297,6 +299,73 @@ const toggleManualImput = () => {
     DASHBOARD PAGE
 ---------------------------------------------------------------------*/
 
+let costumer;
+
+const renderShopping = async () => {
+    const container = document.getElementById("ai-ads-container");
+    const token = localStorage.getItem("accessToken");
+
+    container.innerHTML = "<span class='loader'></span>";
+    const result = await fetchRequestAuthPost(costumer, link.shoppingAi, token);
+
+    if (result && !result.error) {
+        renderAiAd(result);
+    }
+};
+
+// renderShopping();
+
+const loadReports = async () => {
+    const token = localStorage.getItem("accessToken");
+
+    try {
+        const result = await fetchRequestAuthGet(token, link.reportAi);
+
+        if (result) {
+            const report = JSON.parse(result.response);
+
+            renderReports(report);
+        }
+    } catch (err) {
+        console.error("erro, " + err);
+        return;
+    }
+};
+
+loadReports();
+
+const renderReports = (result) => {
+    const divSection = document.querySelector("#message-load-report");
+    const textAiCategory = document.querySelector("#ai-category-text");
+    const textAiHabbits = document.querySelector("#ai-habits-text");
+
+    divSection.style.display = "none";
+    const { categoryAnalysis, habbitsAnalysis, costumerType, ads } = result;
+
+    costumer = costumerType;
+
+    const adsData = {
+        link: ads.link,
+        reason: ads.reason,
+        productName: ads.name,
+        price: ads.price,
+        image: ads.image,
+    };
+
+    renderCharts(transactions);
+    renderAiAd(adsData);
+
+    textAiCategory.textContent = categoryAnalysis;
+    textAiHabbits.textContent = habbitsAnalysis;
+    console.log(`Tipo de consumidor: ${costumerType}\nlink util: ${ads}`);
+
+    if (result.error) {
+        alert("Erro interno, favor recomeçar");
+        divSection.style.display = "none";
+        button.style.display = "block";
+    }
+};
+
 const renderDashboard = (transactions, inicialBalance = 0) => {
     const balance = document.querySelector("#total-balance");
     const expense = document.querySelector("#monthly-expenses");
@@ -365,7 +434,6 @@ const renderDashboard = (transactions, inicialBalance = 0) => {
     }
 };
 
-const transactions = await getTransactionsAtServer();
 const inicialBalance = localStorage.getItem("inicialBalance") ?? 0;
 renderDashboard(transactions, parseFloat(inicialBalance));
 
@@ -402,6 +470,7 @@ const tooglePage = (e) => {
 
 const logout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("inicialBalance");
     location.href = link.login;
 };
 
@@ -412,6 +481,176 @@ links.forEach((link) => {
         tooglePage(e);
     });
 });
+
+/* ------------------------------------------------------------------
+    REPORT PAGE
+---------------------------------------------------------------------*/
+
+let categoryChartInst = null;
+let cashFlowChartInst = null;
+
+const generateVisualAIReport = async () => {
+    const divSection = document.querySelector("#message-load-report");
+    const button = document.querySelector("#generate-ai-report");
+    const textAiCategory = document.querySelector("#ai-category-text");
+    const textAiHabbits = document.querySelector("#ai-habits-text");
+    const token = localStorage.getItem("accessToken");
+    divSection.style.display = "block";
+    button.style.display = "none";
+
+    const transactionsToIA = transactions.slice(0, 60);
+
+    const result = await fetchRequestAuthPost(
+        { transactionsToIA },
+        link.transactionAI,
+        token,
+    );
+
+    if (result && !result.error) {
+        divSection.style.display = "none";
+        button.style.display = "block";
+        const { categoryAnalysis, habbitsAnalysis, costumerType, ads } =
+            result.response;
+
+        costumer = costumerType;
+
+        const adsData = {
+            link: ads.link,
+            reason: ads.reason,
+            productName: ads.name,
+            price: ads.price,
+            image: ads.image,
+        };
+
+        renderCharts(transactions);
+        renderAiAd(adsData);
+
+        textAiCategory.textContent = categoryAnalysis;
+        textAiHabbits.textContent = habbitsAnalysis;
+        console.log(`Tipo de consumidor: ${costumerType}\nlink util: ${ads}`);
+    }
+
+    if (result.error) {
+        alert("Erro interno, favor recomeçar");
+        divSection.style.display = "none";
+        button.style.display = "block";
+    }
+};
+
+function renderCharts(data) {
+    const boxGrafics = document.querySelector("#main-section-report");
+    boxGrafics.style.display = "grid";
+    const ctxCat = document.getElementById("categoryChart").getContext("2d");
+
+    const expense = data.filter((transactions) => {
+        return transactions.type === "expense";
+    });
+
+    const totalExpense = expense.reduce((acc, transaction) => {
+        return acc + parseFloat(transaction.amount);
+    }, 0);
+
+    const income = data.filter((transaction) => {
+        return transaction.type === "income";
+    });
+
+    const totalIncome = income.reduce((acc, transaction) => {
+        return acc + parseFloat(transaction.amount);
+    }, 0);
+
+    const totalByCategory = expense.reduce((acc, transaction) => {
+        const category = transaction.category || "Outros";
+
+        acc[category] = (acc[category] || 0) + Number(transaction.amount);
+        return acc;
+    }, {});
+
+    const categoryLabels = Object.keys(totalByCategory);
+    const categoryAmount = Object.values(totalByCategory);
+
+    if (categoryChartInst) categoryChartInst.destroy();
+
+    categoryChartInst = new Chart(ctxCat, {
+        type: "doughnut",
+        data: {
+            labels: categoryLabels,
+            datasets: [
+                {
+                    data: categoryAmount,
+                    backgroundColor: [
+                        "#FF5733", // Laranja Vibrante
+                        "#FFC300", // Amarelo Ouro
+                        "#FF2E2E", // Vermelho Puro
+                        "#FF8D1A", // Abóbora
+                        "#E63946", // Carmesim
+                        "#F4A261", // Areia Alaranjada
+                        "#D62828", // Vermelho Escuro
+                        "#FFD166", // Amarelo Pastel
+                        "#EF476F", // Rosa Choque
+                        "#FF7B00", // Laranja Brilhante
+                        "#BC3908", // Terra de Siena
+                        "#9B2226", // Vinho Quente
+                        "#FB8500", // Tangerina
+                        "#FFB703", // Âmbar
+                        "#E07A5F", // Coral Terroso
+                    ],
+                    borderWidth: 0,
+                },
+            ],
+        },
+        options: { responsive: true, maintainAspectRatio: false },
+    });
+
+    const ctxFlow = document.getElementById("cashFlowChart").getContext("2d");
+
+    if (cashFlowChartInst) cashFlowChartInst.destroy();
+
+    cashFlowChartInst = new Chart(ctxFlow, {
+        type: "bar",
+        data: {
+            labels: ["Entradas", "Saídas"],
+            datasets: [
+                {
+                    label: "R$ Valor Total",
+                    data: [totalIncome, totalExpense],
+                    backgroundColor: ["#28a745", "#dc3545"],
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } },
+        },
+    });
+}
+
+function renderAiAd(adsData) {
+    const container = document.getElementById("ai-ads-container");
+
+    if (!adsData) {
+        container.innerHTML = "";
+        return;
+    }
+    container.innerHTML = "";
+
+    const imageUrl =
+        adsData.image || "https://via.placeholder.com/80?text=Oferta";
+
+    container.innerHTML = `
+        <div class="ads-card">        
+            <div class="ads-info">
+                <div style="display:flex; align-itens=center; margin-bottom=12px">
+                <h4>${adsData.productName}</h4>
+                <img src="${imageUrl}" alt="Preview" class="ads-thumb">
+                </div>
+                <p>${adsData.reason}</p>
+                <a href="${adsData.link}" target="_blank" class="btn-ads">
+                    Ver Oferta Imperdível
+                </a>
+            </div>
+        </div>
+    `;
+}
 
 /* ------------------------------------------------------------------
     EVENTS LISTENER
@@ -447,3 +686,7 @@ document.querySelector(".filter-desc").addEventListener("submit", (e) => {
     e.preventDefault();
     renderHistoric(transactions, e.target[0].value);
 });
+
+document
+    .querySelector("#generate-ai-report")
+    .addEventListener("click", generateVisualAIReport);
